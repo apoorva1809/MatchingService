@@ -139,6 +139,7 @@ public class MatchingServiceOracleDaoImpl implements MatchingServiceOracleDao {
 		AssignedIssue issuetobeAssigned=new AssignedIssue();
 		issuetobeAssigned.setCustomerEmail(customerEmail);
 		issuetobeAssigned.setIssueId(issueId);
+		issuetobeAssigned.setTechId(techId);
 		TechnicianAssigned ta=new TechnicianAssigned();
 		ta.setReservationCode(uuid);
 		ta.setAssignedIssues(issuetobeAssigned);
@@ -146,8 +147,6 @@ public class MatchingServiceOracleDaoImpl implements MatchingServiceOracleDao {
 		//Query query = session.createQuery(hql);
 		//query.executeUpdate();
 		session.save(ta);
-		tx.commit();
-		session.close();
 		} catch (Exception e) {
 			logger.error("Exception in updating assignedTechnician table " + e);
 		}finally {

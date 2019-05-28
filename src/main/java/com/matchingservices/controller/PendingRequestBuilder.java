@@ -6,6 +6,9 @@ package com.matchingservices.controller;
 
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.matchingservices.kafka.KafkaProducer;
+import com.matchingservices.kafka.ReservationDetails;
 import com.matchingservices.models.Criteria;
 import com.matchingservices.models.CustPendingIssues;
 import com.matchingservices.models.Technicians;
@@ -18,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.slf4j.Logger;
 
 /**
@@ -34,10 +39,17 @@ public class PendingRequestBuilder {
 	
 	@Autowired
 	private MatchingService matchingservice;
+	
+	@Autowired
+	private KafkaProducer producer;
 
    @RequestMapping(value="/AssignTechnicians", method = RequestMethod.GET)
-    public @ResponseBody String submitRequest() {
+    public @ResponseBody List<ReservationDetails> submitRequest() {
     logger.info("Entered into submitRequest Method");
+    ObjectMapper mapper = new ObjectMapper();
+    ReservationDetails reservationDetails=null;
+    String ReservationCode="";
+    List<ReservationDetails> listOfTechAppended=new ArrayList<ReservationDetails>();
     try {
          List<CustPendingIssues> pendingIssuesList=null;
          Technicians technician=null; 
@@ -53,12 +65,18 @@ public class PendingRequestBuilder {
          		//Update the status to unavailable
          		matchingservice.updateTechnicianStatus(technician);
          		
-           String ReservationCode	=	matchingservice.reserveTechnician(issue.getCustIssues().getIssueId(), issue.getCustIssues().getCustEmail(), technician.getTechId());
+           ReservationCode	=	matchingservice.reserveTechnician(issue.getCustIssues().getIssueId(), issue.getCustIssues().getCustEmail(), technician.getTechId());
+           reservationDetails=new ReservationDetails();
+           reservationDetails.setReservCode(ReservationCode);
+           reservationDetails.setCustEmail(issue.getCustIssues().getCustEmail());
+           listOfTechAppended.add(reservationDetails);
          	}else {
          		logger.info("No technician available");
          	}
          
          }
+         String jsonInString = mapper.writeValueAsString(reservationDetails);
+         producer.sendMessage(jsonInString);
          
     } catch (Exception e) {
   			logger.error("Exception in processing Assigned technicians " + e);
@@ -66,7 +84,7 @@ public class PendingRequestBuilder {
     
     
    
-    return "Greetings from Spring Boot!";
+    return listOfTechAppended;
         
         
         
