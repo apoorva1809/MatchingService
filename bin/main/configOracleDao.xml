@@ -1,0 +1,47 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:tx="http://www.springframework.org/schema/tx" 
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+  http://www.springframework.org/schema/beans/spring-beans.xsd
+  http://www.springframework.org/schema/context
+  http://www.springframework.org/schema/context/spring-context.xsd 
+  http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+  
+  
+  
+<bean id="mappingserviceDataSource" primary="true" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+    <property name="driverClass" value="${datasource.matchingService.driverClassName}" />
+        <property name="jdbcUrl" value="${datasource.matchingService.url}" />
+        <property name="user" value="${datasource.matchingService.username}" />
+        <property name="password" value="${datasource.matchingService.password}" /> 
+        <property name="minPoolSize" value="${datasource.matchingService.min-size}" />
+        <property name="maxPoolSize" value="${datasource.matchingService.max-size}" />
+</bean>
+
+<bean id="matchingServiceSessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+    <property name="dataSource">
+    <ref bean="mappingserviceDataSource"/>
+    </property>
+    <property name="hibernateProperties">
+    <props>
+<prop key="hibernate.dialect">org.hibernate.dialect.OracleDialect</prop>
+<prop key="hibernate.show_sql">true</prop>
+<prop key="hibernate.hbm2ddl.auto">update</prop>
+    </props>
+    </property>
+     <property name="annotatedClasses">
+			<list>
+			    <value>com.matchingservices.models.Technicians</value>
+				<value>com.matchingservices.models.Issues</value>
+				<value>com.matchingservices.models.CustPendingIssues</value>
+				<value>com.matchingservices.models.Customer</value>
+				<value>com.matchingservices.models.Criteria</value>
+				<value>com.matchingservices.models.TechnicianAssigned</value>
+				
+			</list>
+			</property>
+    </bean>
+    
+    
+</beans>            

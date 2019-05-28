@@ -1,0 +1,23 @@
+plugins {
+	id 'org.springframework.boot' version '1.5.5.RELEASE'
+	id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.issuesfixes.controller'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+compile group: 'org.springframework.boot', name: 'spring-boot-starter-tomcat', version: '1.5.4.RELEASE'
+compile group: 'org.springframework', name: 'spring-core', version: '4.3.12.RELEASE'
+compile group: 'org.hibernate', name: 'hibernate-core', version: '4.3.11.Final'	
+compile group: 'org.hibernate', name: 'hibernate-entitymanager', version: '4.3.11.Final'	
+compile group: 'org.hibernate.javax.persistence', name: 'hibernate-jpa-2.1-api', version: '1.0.0.Final'
+compile(group: 'org.springframework.kafka', name: 'spring-kafka', version: '1.1.1.RELEASE')
+}
