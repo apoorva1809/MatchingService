@@ -70,13 +70,15 @@ public class PendingRequestBuilder {
            reservationDetails.setReservCode(ReservationCode);
            reservationDetails.setCustEmail(issue.getCustIssues().getCustEmail());
            listOfTechAppended.add(reservationDetails);
+           String jsonInString = mapper.writeValueAsString(reservationDetails);
+           producer.sendMessage(jsonInString);
          	}else {
          		logger.info("No technician available");
          	}
          
          }
-         String jsonInString = mapper.writeValueAsString(reservationDetails);
-         producer.sendMessage(jsonInString);
+         
+        
          
     } catch (Exception e) {
   			logger.error("Exception in processing Assigned technicians " + e);
